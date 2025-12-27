@@ -8,8 +8,6 @@ import org.springframework.security.config.annotation.web.reactive.EnableWebFlux
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 
-
-
 @Configuration
 @EnableWebFluxSecurity
 public class SecurityConfig {
@@ -21,8 +19,8 @@ public class SecurityConfig {
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .securityContextRepository(jwtSecurityContextRepository)
                 .authorizeExchange(ex -> ex
-                        .pathMatchers("/api/auth/t").authenticated()
-                        .anyExchange().permitAll()
+                        .pathMatchers("/api/auth/login/**", "/api/auth/register/**").permitAll()
+                        .anyExchange().authenticated()
                 )
                 .build();
     }

@@ -15,6 +15,7 @@ import reactor.core.publisher.Mono;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Collections;
+import java.util.Date;
 
 @Service
 public class JwtService {
@@ -24,25 +25,37 @@ public class JwtService {
 
     public Mono<UserDetails> validateToken(String token) {
         return Mono.fromCallable(() -> {
-            System.out.println("12121212");
 
             Claims claims = Jwts.parserBuilder()
                     .setSigningKey(getKeu())
                     .build()
                     .parseClaimsJws(token)
                     .getBody();
-            System.out.println("66666");
 
             String username = claims.getSubject();
             if (username == null || username.isEmpty()) {
-                throw new RuntimeException("Token inválido");
+                throw new RuntimeException("Token not valid");
             }
-                System.out.println("Dssdasdasdadsd");
+
+            if(tokenExpired(token)){
+                throw new RuntimeException("Token expired");
+            }
+
             return User.withUsername(username)
                     .password("")
                     .authorities(Collections.emptyList())
                     .build();
         }).onErrorResume(e -> Mono.empty());
+    }
+
+    public boolean tokenExpired(String token){
+        return Jwts.parserBuilder()
+                .setSigningKey(getKeu())
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .getExpiration()
+                .before(new Date());
     }
 
     public Key getKeu(){
