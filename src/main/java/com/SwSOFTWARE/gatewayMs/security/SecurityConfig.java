@@ -21,7 +21,7 @@ public class SecurityConfig {
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .securityContextRepository(jwtSecurityContextRepository)
                 .authorizeExchange(ex -> ex
-                        .pathMatchers("/auth/test/t").authenticated()
+                        .pathMatchers("/api/auth/t").authenticated()
                         .anyExchange().permitAll()
                 )
                 .build();
